@@ -1,4 +1,4 @@
-#define _POSIX_C_SOURCE 200809 L
+#define _POSIX_C_SOURCE 200809L
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -266,11 +266,10 @@ save_files(const char * pkg,
 static int
 install(const char * pkg) {
    char tmp[] = "/tmp/vpkg-info-XXXXXX";
-   char info[PATH_MAX];
    char path[PATH_MAX];
    char files[PATH_MAX];
-   char * name;
-   char * version;
+   char *name = NULL;
+   char *version = NULL;
    int fd;
    char * argv[] = {
       "tar",
