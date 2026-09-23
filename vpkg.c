@@ -107,14 +107,14 @@ static char *
    }
 
 static int
-build(const char * dir,
-   const char * pkg) {
+build(const char *dir, const char *pkg) {
    char cwd[PATH_MAX];
    char out[PATH_MAX];
-   char * argv[] = {
+   char info[PATH_MAX];
+   char *argv[] = {
       "tar",
       "-C",
-      (char * ) dir,
+      (char *)dir,
       "-cf",
       out,
       ".",
@@ -124,13 +124,22 @@ build(const char * dir,
    if (!getcwd(cwd, sizeof(cwd)))
       return -1;
 
+   if (snprintf(info, sizeof(info), "%s/.vpkg/info", dir) >=
+      (int)sizeof(info))
+      return -1;
+
+   if (access(info, R_OK) != 0) {
+      fprintf(stderr, "vpkg: missing %s\n", info);
+      return -1;
+   }
+
    if (pkg[0] == '/') {
       if (snprintf(out, sizeof(out), "%s", pkg) >=
-         (int) sizeof(out))
+         (int)sizeof(out))
          return -1;
    } else {
       if (snprintf(out, sizeof(out), "%s/%s", cwd, pkg) >=
-         (int) sizeof(out))
+         (int)sizeof(out))
          return -1;
    }
 
@@ -467,6 +476,11 @@ int
 main(int argc, char ** argv) {
    if (argc < 2) {
       usage();
+      return 1;
+   }
+
+   if (geteuid() != 0) {
+      printf("User needs to be root");
       return 1;
    }
 
