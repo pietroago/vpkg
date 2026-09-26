@@ -444,6 +444,11 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  if (geteuid() != 0) {
+    fprintf(stderr, "vpkg: must be run as root\n");
+    return 1;
+  }
+
   if (!strcmp(argv[1], "-b") && argc == 4) return build(argv[2], argv[3]) != 0;
 
   if (!strcmp(argv[1], "-i") && argc == 3) return install(argv[2]) != 0;
